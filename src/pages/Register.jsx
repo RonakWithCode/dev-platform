@@ -31,12 +31,18 @@ const Register = () => {
   const handleFormSubmit = (e) => {
     e.preventDefault();
 
-    const pass1 = registerForm.current.password1.value
-    const pass2 = registerForm.current.password2.value
+    const pass1 = registerForm.current.password1.value;
+    const pass2 = registerForm.current.password2.value;
+    const fileInput = registerForm.current.fileUpload;
     if (pass1 !== pass2) {
       alert('Passwords did not match!')
       return
     }
+    else if (!fileInput.files[0]) {
+      alert('Please upload a profile picture!');
+      return;
+    }
+
     const formData = {
       username: registerForm.current.username.value,
       about: registerForm.current.about.value,
@@ -58,7 +64,8 @@ const Register = () => {
     console.log('Form Data:', formData);
     // const userInfo = { name, email, password1, password2 }
 
-    registerUser(formData)
+
+    registerUser(formData,fileInput.files[0])
     };
 
   // return (
@@ -204,7 +211,7 @@ const Register = () => {
                         className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
                       >
                         <span>Upload a file</span>
-                        <input id="fileUpload" name="fileUpload" type="file" className="sr-only" />
+                        <input id="fileUpload" name="fileUpload" type="file" accept="image/png, image/jpg, image/jpeg, image/gif" className="sr-only" />
                       </label>
                       <p className="pl-1">or drag and drop</p>
                     </div>

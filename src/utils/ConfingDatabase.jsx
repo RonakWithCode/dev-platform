@@ -14,12 +14,11 @@ export class DatabaseService{
         }
 
 
-        async createUserInfo(UserInfo,IsAccountDev,UserId){
-            UserInfo.userId = UserId;
-            UserInfo.IsAccountDev = IsAccountDev;
+        async createUserInfo(UserInfo){
+            
               try {
                 // Assuming authService.databases is your Appwrite databases instance
-                const response = await this.database.createDocument(conf.AppwriteDatabaseID, conf.AppwriteCollectionUserInfoID,UserId,
+                const response = await this.database.createDocument(conf.AppwriteDatabaseID, conf.AppwriteCollectionUserInfoID,UserInfo.userId,
                     UserInfo);
                 console.log('Document created successfully:', response);
               } catch (error) {
@@ -51,11 +50,35 @@ export class DatabaseService{
         }
         }
 
-        async uploadFile(file){
+        async getAllUserByNotIsAccountDev(type){
             try {
-                return await this.bucket.createFile(conf.AppwriteBucketID,
+            return await this.database.listDocuments(conf.AppwriteDatabaseID,conf.AppwriteCollectionUserInfoID,[
+                Query.equal('IsAccountDev', type)
+            ]);
+
+            }catch(error){
+
+            console.error("getAllUser ::: "+error);
+            }
+        }
+
+        async getAllUser(){
+            try {
+            return await this.database.listDocuments(conf.AppwriteDatabaseID,conf.AppwriteCollectionUserInfoID);
+            }catch(error){
+            console.error("getAllUser ::: "+error);
+            }
+        }
+
+        // 
+
+        async uploadFile(file){
+            
+            try {
+                const response =  await this.bucket.createFile(conf.AppwriteBucketID,
                     ID.unique(),
-                    file)
+                    file);
+                return response.$id
             } catch (error) {
                 console.log(error);                
                 return false;
@@ -70,11 +93,19 @@ export class DatabaseService{
                 return false;
             }
         }
-
-        getfilePreview(fileId){
-            return this.bucket.getFilePreview(conf.AppwriteBucketID,fileId)
-             
+        async getfilePrevie(fileId){
+            try {
+            return this.bucket.getFilePreview(conf.AppwriteBucketID,fileId);
+        }catch{
+            return false;
         }
+        }
+        getFileDownloadLink(fileId){
+            return this.bucket.getFileDownload(conf.AppwriteBucketID, fileId);
+        }
+
+
+
 }
 const databaseService = new DatabaseService();
 export default databaseService;

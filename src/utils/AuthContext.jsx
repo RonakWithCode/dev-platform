@@ -38,7 +38,7 @@ export const AuthProvider = ({children}) => {
             setUser(null)
          }
 
-         const registerUser = async (userInfo) => {
+         const registerUser = async (userInfo,file) => {
             setLoading(true)
 
             try{
@@ -50,17 +50,33 @@ export const AuthProvider = ({children}) => {
                   let accountDetails = await account.get();
                   setUser(accountDetails)
                   console.log("User id ",accountDetails.$id)
-                  new DatabaseService().createUserInfo(userInfo,true,accountDetails.$id)
-                  navigate('/')
+                  const databaseService = new DatabaseService();
+                  databaseService.uploadFile(file).then((fileId) => {
+                    if (fileId) {
+                        // File was uploaded successfully, and fileId contains the ID
+                        console.log('File uploaded successfully. File ID:', fileId);
+                        console.log('File uploaded successfully. File ID SIZE:', String(fileId).length);
+                        userInfo.userId = accountDetails.$id;
+                        userInfo.IsAccountDev = true;
+                        userInfo.coverPhoto = String(fileId);
+                        databaseService.createUserInfo(userInfo)
+                        navigate('/')
+                      } else {
+                        // There was an issue with the upload
+                        console.error('File upload failed.');
+
+                        return false;
+                      }
+                  }
+                  )
+                  .catch((error) => { 
+                    // Handle any errors that occurred during the upload
+                    console.error('Error uploading file:', error);
+                  });
                 } else {
                   return Alert("Error To Create Account")
                 }
            
-
-
-
-
-
             }catch(error){
                 throw error;
             }

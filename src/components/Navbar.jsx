@@ -1,29 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '../utils/AuthContext';
 import image from "../assets/add.png";
-
+import ConfingDatabase from "../utils/ConfingDatabase"
 const Navbar = () => {
   const { user, logoutUser } = useAuth();
+
   const [PhoneModeactiveClass, setPhoneModeactiveClass] = useState("hidden");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [search,setSearch] = useState("");
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
-
-
+  const [userInfo, setUserInfo] = useState(null);
+  const [userDp, setUserDp] = useState(null);
+  
   const navigateLinks = [
     { name: "Home", to: "/" },
     { name: "About", to: "/about" },
     { name: "Service", to: "/service" },
     { name: "Contact", to: "/contact" },
   ];
+
+
+
+
+  useEffect(() => {
+    // Assuming ConfingDatabase.getUserInfo returns a promise
+    ConfingDatabase.getUserInfo(user.$id)
+      .then(async data => {
+        setUserInfo(data)
+        let userDp = await ConfingDatabase.getfilePrevie(data.coverPhoto)
+        console.log(userDp.href);
+        setUserDp(userDp.href)
+        // setUserDp(userDp);
+      })
+      .catch(error => console.error('Error fetching user info:', error));
+  }, []); // Empty dependency array means this effect will run once when the component mounts
+
   if (user) {
     navigateLinks.push({ name: "Profile", to: "/profile" });
     navigateLinks.push({ name: "Logout", to: "/login", onClick: logoutUser });
+    // setUserInfo(ConfingDatabase.getUserInfo(user.$id))    
   }
-
   const PhoneMode = () => {
     setPhoneModeactiveClass((prevClass) => (prevClass === "hidden" ? "" : "hidden"));
   };
@@ -54,7 +73,7 @@ const Navbar = () => {
                 data-dropdown-placement="bottom"
               >
                 <span className="sr-only">Open user menu</span>
-                <img className="w-8 h-8 rounded-full" src="https://flowbite.com/docs/images/logo.svg" alt="user photo" />
+                <img className="w-8 h-8 rounded-full" src={userDp} alt="user photo" />
               </button>
 
               {isDropdownOpen && (
@@ -64,8 +83,8 @@ const Navbar = () => {
                 >
                   <div className="py-1">
                     <div className="px-4 py-3">
-                      <span className="block text-sm text-gray-900">Bonnie Green</span>
-                      <span className="block text-sm text-gray-500 truncate">name@flowbite.com</span>
+                      <span className="block text-sm text-gray-900">{userInfo.username}</span>
+                      <span className="block text-sm text-gray-500 truncate">{userInfo.email}</span>
                     </div>
                   </div>
                   <ul className="py-2" aria-labelledby="user-menu-button">
