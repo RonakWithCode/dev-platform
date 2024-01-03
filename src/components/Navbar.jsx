@@ -1,4 +1,4 @@
-import React, { useState, useEffect  } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '../utils/AuthContext';
 import image from "../assets/add.png";
@@ -8,13 +8,13 @@ const Navbar = () => {
 
   const [PhoneModeactiveClass, setPhoneModeactiveClass] = useState("hidden");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [search,setSearch] = useState("");
+  const [search, setSearch] = useState("");
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
   const [userInfo, setUserInfo] = useState(null);
   const [userDp, setUserDp] = useState(null);
-  
+
   const navigateLinks = [
     { name: "Home", to: "/" },
     { name: "About", to: "/about" },
@@ -27,15 +27,19 @@ const Navbar = () => {
 
   useEffect(() => {
     // Assuming ConfingDatabase.getUserInfo returns a promise
-    ConfingDatabase.getUserInfo(user.$id)
-      .then(async data => {
-        setUserInfo(data)
-        let userDp = await ConfingDatabase.getfilePrevie(data.coverPhoto)
-        console.log(userDp.href);
-        setUserDp(userDp.href)
-        // setUserDp(userDp);
-      })
-      .catch(error => console.error('Error fetching user info:', error));
+    if (user) {
+
+      ConfingDatabase.getUserInfo(user.$id)
+        .then(async data => {
+          setUserInfo(data)
+          let userDp = await ConfingDatabase.getfilePrevie(data.coverPhoto)
+          // console.log(userDp.href);
+          setUserDp(userDp.href)
+          // setUserDp(userDp);
+        })
+        .catch(error => console.error('Error fetching user info:', error));
+    }
+
   }, []); // Empty dependency array means this effect will run once when the component mounts
 
   if (user) {
@@ -53,11 +57,11 @@ const Navbar = () => {
         <div className="flex flex-wrap items-center justify-between mx-auto p-4">
           <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse">
             <img src="https://flowbite.com/docs/images/logo.svg" className="h-8" alt="Flowbite Logo" />
-            <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Flowbite</span>
+            <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">DEV-Platform</span>
           </Link>
-          <form >
-            <div style={{width:250}} className="relative">
-              <input onChange={text => {setSearch(text.target.value);}}    value={search} type="search" id="default-search" className="block w-full  p-4 ps-1 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 " placeholder="Search App,news,update... " required />
+          <form>
+            <div style={{ width: 250 }} className="relative">
+              <input onChange={text => { setSearch(text.target.value); }} value={search} type="search" id="default-search" className="block w-full  p-4 ps-1 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 " placeholder="Search App,news,update... " required />
               <button type="submit" className="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2">Search</button>
             </div>
           </form>
@@ -79,37 +83,45 @@ const Navbar = () => {
               {isDropdownOpen && (
                 <div
                   style={{ top: '3rem', right: '1rem' }}
-                  className="origin-top-right absolute w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100"
-                >
+                  className="origin-top-right absolute w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100">
                   <div className="py-1">
                     <div className="px-4 py-3">
                       <span className="block text-sm text-gray-900">{userInfo.username}</span>
                       <span className="block text-sm text-gray-500 truncate">{userInfo.email}</span>
                     </div>
                   </div>
-                  <ul className="py-2" aria-labelledby="user-menu-button">
-                    <li>
-                      <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        Dashboard
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        Settings
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        Earnings
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        Sign out
-                      </a>
-                    </li>
-                  </ul>
+                  {/* Changing this into link */}
+                  <NavLink to="/Dashboard" 
+                  
+                  className={({ isActive }) => {
+                    return isActive
+                      ? "block px-4 py-2 text-sm text-blue-700 hover:bg-gray-100"
+                      : "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100";
+                  }}>
+                    Dashboard
+                  </NavLink>
+                  <NavLink to="/profile" className={({ isActive }) => {
+                    return isActive
+                      ? "block px-4 py-2 text-sm text-blue-700 hover:bg-gray-100"
+                      : "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100";
+                  }}>
+                    Profile
+                  </NavLink>
+                  <NavLink to="/Settings" className={({ isActive }) => {
+                    return isActive
+                      ? "block px-4 py-2 text-sm text-blue-700 hover:bg-gray-100"
+                      : "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100";
+                  }}>
+                    Settings
+                  </NavLink>
+                  <NavLink to="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  onClick={logoutUser}>
+                    Sign out
+                  </NavLink>
+
+
                 </div>
+
               )}
             </> : <>
               <Link to={"/login"}>

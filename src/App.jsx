@@ -8,6 +8,8 @@ import Home from './pages/Home'
 import Profile from './pages/Profile'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import Dashboard from './pages/Dashboard'
+import CreatePage from './pages/CreatePage'
 
 
 
@@ -59,6 +61,8 @@ function App() {
         <Route path="/" element={<Home/>}/>
         <Route element={<PrivateRoutes />}>
           <Route path="/profile" element={<Profile/>}/>
+          <Route path="/dashboard" element={<Dashboard/>}/>
+          <Route path="/new" element={<CreatePage/>}/>
         </Route>
       </Routes>
     </AuthProvider>

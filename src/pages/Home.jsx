@@ -97,6 +97,10 @@ function Home() {
     <AppPublishInfoView product={products} />
     </>
   )
+
+
 }
+
+
 
 export default Home
