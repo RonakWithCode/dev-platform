@@ -20,7 +20,7 @@ function CreatePage() {
     }
     else if (e.target.value === "blog")
     {
-      setbackgroundImage(blogImage);
+      setbackgroundImage(BlogImage); 
     }
     else{
       setbackgroundImage(AppImage);
@@ -28,7 +28,7 @@ function CreatePage() {
   };
 
   return (
-    <div
+  <div
     style={{
       backgroundImage: `url(${backgroundImage})`,
       backgroundSize: 'cover',

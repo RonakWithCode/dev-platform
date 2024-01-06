@@ -3,6 +3,7 @@ import { account } from "../appwriteConfig";
 import { useNavigate } from "react-router-dom";
 import { ID} from 'appwrite';
 import { Alert } from "@material-tailwind/react";
+import LoadingDialogBox from '../components/LoadingDialogBox';
 
 import { DatabaseService } from "./ConfingDatabase";
 const AuthContext = createContext()
@@ -103,7 +104,7 @@ export const AuthProvider = ({children}) => {
 
     return(
         <AuthContext.Provider value={contextData}>
-            {loading ? <p>Loading...</p> : children}
+            {loading ? <LoadingDialogBox title={"Loading"}/> : children}
         </AuthContext.Provider>
     )
 }

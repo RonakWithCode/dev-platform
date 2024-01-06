@@ -24,7 +24,8 @@
     "react-modal": "^3.14.4",
     "react-pro-sidebar": "^1.1.0-alpha.1",
     "react-router-dom": "^6.21.1",
-    "react-select": "^5.2.1"
+    "react-select": "^5.2.1",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",

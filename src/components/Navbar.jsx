@@ -28,13 +28,12 @@ const Navbar = () => {
   useEffect(() => {
     // Assuming ConfingDatabase.getUserInfo returns a promise
     if (user) {
-
       ConfingDatabase.getUserInfo(user.$id)
         .then(async data => {
           setUserInfo(data)
           let userDp = await ConfingDatabase.getfilePrevie(data.coverPhoto)
           // console.log(userDp.href);
-          setUserDp(userDp.href)
+          setUserDp(userDp)
           // setUserDp(userDp);
         })
         .catch(error => console.error('Error fetching user info:', error));
