@@ -1,6 +1,6 @@
 import { Client, Databases, Storage, ID, Query } from "appwrite";
 import conf from './VarConfing'
-import { v4 as uuidv4 } from 'uuid';
+import ErrorDialogBox from '../components/ErrorDialogBox';
 
 
 
@@ -73,18 +73,14 @@ export class DatabaseService {
 
     // Post Blogs App Functions
     async createApp(App) {
-        console.log(App);
-        try {
-            // const Id = uuidv4().replace("-", "").toString();
-            const Id = ID.unique(); // genrate a unique id
-            App.AppId = Id;
-            console.log(Id);
-            console.log(uuidv4());
 
-            const resp = await this.uploadAPP(App.appLogo,App.screenshots,App.appCoverPhoto,Id)
-            //  logo: { id: logoResponse.$id, url: logoURL },
-            // screenShort: screenShorturl,
-            // coverPhoto: { 
+        try {
+            const timestamp = new Date().getTime();
+            // const Id = uuidv4().replace("-", "").toString();
+            const Id = App.developerId + timestamp // genrate a unique id
+            const Ids = ID.unique()  // genrate a unique id
+            App.AppId = Id;
+            const resp = await this.uploadAPP(App.appLogo,App.screenshots,App.appCoverPhoto,Ids)
             App.appLogo = resp.logo.id;
             App.appLogoUrl = resp.logo.url; 
             App.appCoverPhoto = resp.coverPhoto.id
@@ -94,22 +90,90 @@ export class DatabaseService {
             for (let index = 0; index < resp.screenShort.length; index++) {
                 const id = resp.screenShort[index].id;
                 const url = resp.screenShort[index].url;
-                ScreenShortarrayUri.push(id); 
+                ScreenShortarrayUri.push(url); 
                 ScreenShortarrayId.push(id); 
             }
             App.screenshots = ScreenShortarrayId;
             App.screenshotsUrl = ScreenShortarrayUri;
             console.log(App);
-            console.log(resp);
-            // Assuming authService.databases is your Appwrite databases instance
-            const response = await this.database.createDocument(conf.AppwriteDatabaseID, conf.AppwriteAppinfoCollection, App.AppId,
-                App); 
+            const response = await this.database.createDocument(conf.AppwriteDatabaseID, conf.AppwriteAppinfoCollection, App.AppId, App);
             return response;
             }
          catch (error) {
             return 'Error creating document:', error;
         }
     }   
+
+    async SaveDeveloperInfo(Info) {
+        try {
+          console.log("Inside the save developer info :: ", Info);
+      
+          // Check if "DeveloperName" is present in the Info object
+          if (!Info.hasOwnProperty('developerName')) {
+            throw new Error('Missing required attribute "DeveloperName"');
+          }
+      
+          // Include "DeveloperName" in the Info object      
+          const response = await this.database.createDocument(
+            conf.AppwriteDatabaseID,
+            conf.AppwriteDeveloperInformation,
+            Info.developerId,
+            Info
+          );
+      
+          console.log('Document created successfully:', response);
+          return response;
+        } catch (error) {
+          console.log('Document created error:', error);
+          return error;
+        }
+      }
+      
+    async getApp(id){
+        try {
+            return await this.database.getDocument(conf.AppwriteDatabaseID, conf.AppwriteAppinfoCollection, id);
+        } catch (error) {
+            console.error("getApp ::: " + error);
+            return error;
+        }
+    }
+    
+    //  TODO 7/1/24 1:49AM :  make a changing in this code like added query; 
+    async getAllApp() { 
+        // query = Query.equal('pricingType', 'free')
+        try {
+            const output =  await this.database.listDocuments(conf.AppwriteDatabaseID, conf.AppwriteAppinfoCollection);
+            const documents = output ? output.documents : [];
+            console.log(documents);
+            return documents;
+        } catch (error) {
+            console.error("getAllApp ::: " + error);
+            return error;
+        }
+    }
+
+
+// save error and log error :
+
+     async saveError(error) {
+        try {
+        const response = await this.database.createDocument(
+            conf.AppwriteDatabaseID,
+            conf.AppwriteLogandErrorCollection,
+            ID.unique(),
+            error
+          );
+          return response;
+        } catch (error) {
+          console.log('Document created error:', error);
+          return <ErrorDialogBox title={"Database error"} message="Error"/>;
+        }
+      }
+
+      async getErrorbyUserId(id){
+        
+      }
+
 
 
 
@@ -127,30 +191,40 @@ export class DatabaseService {
             return false;
         }
     }
-
+    
     async uploadAPP(logo, screenShort, coverPhoto, id) {
         try {
             let screenShorturl = [];
+    
+            // Create logo file
             const logoResponse = await this.bucket.createFile(conf.AppwritePostAppImageBucketID, id, logo);
+            const logoURL = await this.AppGetFilePreview(logoResponse.$id);
+    
+            // Create cover photo file
             const coverPhotoResponse = await this.bucket.createFile(conf.AppwritePostAppImageBucketID, id, coverPhoto);
+            const coverPhotoURL = await this.AppGetFilePreview(coverPhotoResponse.$id);
+    
+            // Create screenshot files
             for (let i = 0; i < screenShort.length; i++) {
-                    const screenShortResponse = await this.bucket.createFile(conf.AppwritePostAppImageBucketID, id, screenShort[i]);
-                    const screenShortURL = await this.getfilePrevie(screenShortResponse.$id);
-                    screenShorturl.push({ id: screenShortResponse.$id, url: screenShortURL });
-                }
-            const logoURL = await this.getfilePrevie(logoResponse.$id);
-            const coverPhotoURL = await this.getfilePrevie(coverPhotoResponse.$id);
-                const resp = {
-                    logo: { id: logoResponse.$id, url: logoURL },
-                    screenShort: screenShorturl,
-                    coverPhoto: { id: coverPhotoResponse.$id, url: coverPhotoURL }
-                };
-                console.log(resp);
-                return resp;
-            } catch (error) {
-                return 'Error Iamge Upload :', error;
+                const screenShortResponse = await this.bucket.createFile(conf.AppwritePostAppImageBucketID, id, screenShort[i]);
+                const screenShortURL = await this.AppGetFilePreview(screenShortResponse.$id);
+                screenShorturl.push({ id: screenShortResponse.$id, url: screenShortURL });
             }
-        } 
+    
+            const resp = {
+                logo: { id: logoResponse.$id, url: logoURL },
+                screenShort: screenShorturl,
+                coverPhoto: { id: coverPhotoResponse.$id, url: coverPhotoURL }
+            };
+    
+            console.log(resp);
+            return resp;
+        } catch (error) {
+            console.error('Error Image Upload:', error);
+            return 'Error Image Upload';
+        }
+    }
+    
 
 
 
@@ -166,7 +240,17 @@ export class DatabaseService {
     }
     async getfilePrevie(fileId) {
         try {
-            return  this.bucket.getFilePreview(conf.AppwriteBucketID, fileId).href;
+            const url =  this.bucket.getFileDownload(conf.AppwriteBucketID, fileId).href;
+            console.log(url);
+            return url;
+        } catch {
+            return "Error getting file preview";
+        }
+    }
+
+    async AppGetFilePreview(fileId) {
+        try {
+            return this.bucket.getFilePreview(conf.AppwritePostAppImageBucketID, fileId).href;
         } catch {
             return "Error getting file preview";
         }

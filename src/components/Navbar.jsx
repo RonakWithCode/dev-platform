@@ -176,7 +176,7 @@ const Navbar = () => {
                 type="button"
                 className="flex items-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-xl text-center"
               > */}
-              <img width={24} className="hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 cursor-pointer bg-blue-700" src={image} alt="Create" />
+              <img width={24} className="hover:bg-slate-400 focus:ring-4 focus:outline-none focus:ring-blue-300 cursor-pointer" src={image} alt="Create" />
               {/* Create
               </button> */}
             </div>

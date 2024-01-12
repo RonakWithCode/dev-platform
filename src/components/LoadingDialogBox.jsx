@@ -1,6 +1,6 @@
 import React from 'react';
 
-const LoadingDialogBox = ({ title }) => {
+const LoadingDialogBox = ({ title = "Loading" }) => {
   return (
     <div style={{ backgroundColor: "#ffff" }} className="flex flex-col items-center justify-center h-screen">
       <h1>{title}</h1>
