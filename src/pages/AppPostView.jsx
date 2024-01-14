@@ -8,7 +8,7 @@ import emailIcon from '../assets/emailIcon.png'
 import phoneIcon from '../assets/phoneIcon.png'
 import websiteIcon from '../assets/websiteIcon.png'
 function AppPostView() {
-
+  const databaseService = new DatabaseService();
   const { id } = useParams();
   const [app, setApp] = useState(null);
   const [isShow, setIsShow] = useState(false);
@@ -18,7 +18,6 @@ function AppPostView() {
   };
   useEffect(() => {
     const fetchAppDetails = async () => {
-      const databaseService = new DatabaseService();
       try {
         const appData = await databaseService.getApp(id);
         setApp(appData); 

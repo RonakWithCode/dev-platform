@@ -62,7 +62,7 @@ function App() {
         <Route path="/" element={<Home/>}/>
         <Route element={<PrivateRoutes />}>
           <Route path="/profile" element={<Profile/>}/>
-          <Route path="/dashboard" element={<Dashboard/>}/>
+          <Route path="/dashboard" element={<Dashboard/>}/> {/* NOW WORK ON IT */}
           <Route path="/new" element={<CreatePage/>}/>
 
         </Route>
