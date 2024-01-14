@@ -13,6 +13,7 @@ function NewAppContent() {
     developerId : user.$id,
     appName: '',
     appDescription: '',
+    CompanyName: '',
     appLogo: null,
     appCoverPhoto: null,
     screenshots: [null, null, null],
@@ -142,6 +143,18 @@ function NewAppContent() {
                     type="text"
                     name="appName"
                     value={formData.appName}
+                    onChange={handleInputChange}
+                    className="mt-1 p-2 w-full border rounded-md"
+                  />
+                </label>
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-600 mb-2">
+                Company Name:
+                  <input
+                    type="text"
+                    name="CompanyName"
+                    value={formData.CompanyName}
                     onChange={handleInputChange}
                     className="mt-1 p-2 w-full border rounded-md"
                   />

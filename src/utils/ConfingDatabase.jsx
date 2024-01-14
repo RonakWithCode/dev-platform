@@ -132,9 +132,9 @@ export class DatabaseService {
     async getApp(id){
         try {
             return await this.database.getDocument(conf.AppwriteDatabaseID, conf.AppwriteAppinfoCollection, id);
-        } catch (error) {
-            console.error("getApp ::: " + error);
-            return error;
+        } 
+        catch (error) {
+            return "Error fetching details";
         }
     }
     
@@ -143,18 +143,34 @@ export class DatabaseService {
         // query = Query.equal('pricingType', 'free')
         try {
             const output =  await this.database.listDocuments(conf.AppwriteDatabaseID, conf.AppwriteAppinfoCollection);
-            const documents = output ? output.documents : [];
+            const documents = output ? output.documents :  <ErrorDialogBox title={"Not Found"} color="text-yellow-600" liteColor="bg-yellow-100"/>;
             console.log(documents);
             return documents;
         } catch (error) {
-            console.error("getAllApp ::: " + error);
-            return error;
+            return <ErrorDialogBox title={"Error"} message={error} color="text-red-600" liteColor="bg-red-100" />;
+
         }
     }
 
 
-// save error and log error :
+    async getAppbyQuery(query) {
+        try {
+// TODO This is not completely 
+        const output =  await this.database.listDocuments(conf.AppwriteDatabaseID, conf.AppwriteAppinfoCollection, query);
+        const documents = output? output.documents :  <ErrorDialogBox title={"Not Found"} color="text-yellow-600" liteColor="bg-yellow-100"/>;
+        console.log(documents);
+        return documents;
+        }
+        catch (error) {
+            return <ErrorDialogBox title="Error" message={error} />
+        }
 
+
+    }
+
+
+// save error and log error :
+//  TODO 13/1/24 : there are tow functions that will not check is working or is not working 
      async saveError(error) {
         try {
         const response = await this.database.createDocument(
@@ -170,8 +186,15 @@ export class DatabaseService {
         }
       }
 
-      async getErrorbyUserId(id){
-        
+      async getErrorbyUserId(id) {
+        const query = [Query.equal('getLogById', id)]
+        try {
+            const output =  await this.database.listDocuments(conf.AppwriteDatabaseID, conf.AppwriteLogandErrorCollection, query);
+            const documents = output? output.documents : <ErrorDialogBox title={"Not Found"}  color="text-yellow-600" liteColor="bg-yellow-100" />;
+            return documents;
+        } catch (error) {
+            return <ErrorDialogBox title={"Error"} message={error} color="text-red-600" liteColor="bg-red-100" />;
+        }
       }
 
 
