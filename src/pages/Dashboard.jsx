@@ -12,24 +12,28 @@ const Dashboard = () => {
     const fetchAppDetails = async () => {
       try {
         const appData = await databaseService.getApp(id);
-        setProduct(appData); 
+        setProduct(appData);
       } catch (error) {
-        setProduct(error); 
+        setProduct(error);
       }
     };
 
     fetchAppDetails();
   }, [id]);
-  
 
+  const OpenAppClick = (app) => {
+    // Do something with the clicked app, for example, navigate to a detailed view
+    console.log(`Row clicked for ${app.APPName}`);
+    // You can add your navigation logic or any other action here
+  };
 
   const dashboardData = {
     totalPageView: 1000,
     totalButtonClick: 500,
     APPS: [
-      { APPid: 1, APPName: 'Product A', AppIcon: "",totalPageView: 500 , totalButtonClick:200},
-      { APPid: 2, APPName: 'Product B', AppIcon: "" ,totalPageView: 500 , totalButtonClick:200},
-      { APPid: 3, APPName: 'Product C', AppIcon: "" ,totalPageView: 500 , totalButtonClick:200},
+      { APPid: 1, APPName: 'Product A', AppIcon: "", totalPageView: 500, totalButtonClick: 200 },
+      { APPid: 2, APPName: 'Product B', AppIcon: "", totalPageView: 500, totalButtonClick: 200 },
+      { APPid: 3, APPName: 'Product C', AppIcon: "", totalPageView: 500, totalButtonClick: 200 },
     ],
   };
 
@@ -38,7 +42,6 @@ const Dashboard = () => {
   return (
     <div className="container mx-auto p-8">
       <h1 className="text-3xl font-semibold mb-8">Update of new app</h1>
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mb-4">Total Page View</h2>
@@ -77,36 +80,40 @@ const Dashboard = () => {
               {product.pricingType}
             </button>
           </Link>
-        )}    
-    </div> 
+        )}
+      </div>
 
       {/* APPS */}
       <div className="mt-8">
         <h2 className="text-xl font-semibold mb-4">APPS</h2>
-        <ul className="space-y-4">
-          <div className="flex  bg-white p-4">
-          <p className="w-15 h-15 ml-10 text-lg font-semibold">{"Icon"}</p>
-          <p className=" ml-10 text-lg font-semibold">{"Name"}</p>
-          <p className=" ml-10 text-lg font-semibold">{"Total Page View"}</p>
-          <p className=" ml-10 text-lg font-semibold">{"Total Button click's"}</p>
+        <table className="w-full border-collapse border border-gray-300">
+          <thead>
+            <tr className="bg-gray-200">
+              <td className="p-4 text-lg font-semibold">Icon</td>
+              <td className="p-4 text-lg font-semibold">Name</td>
+              <td className="p-4 text-lg font-semibold">Total Page View</td>
+              <td className="p-4 text-lg font-semibold">Total Button click's</td>
+            </tr>
+          </thead>
+          <tbody>
+            {dashboardData.APPS.map((app) => (
+              <tr key={app.APPid} className="border border-gray-300 hover:cursor-pointer hover:border-gray-800 hover:bg-gray-100" onClick={() => OpenAppClick(app)}>
+                <td className="p-4">
+                  <img src={developerIcon} alt="Icon" className="w-15 h-15" />
+                </td>
+                <td className="p-4 ml-8 text-lg font-semibold">{app.APPName}</td>
+                <td className="p-4 ml-8 text-lg font-semibold">{app.totalPageView}</td>
+                <td className="p-4 ml-8 text-lg font-semibold">{app.totalButtonClick}</td>
+              </tr>
+            ))}
 
-          </div>
-
-          {dashboardData.APPS.map((app) => (
-            <li key={app.APPid} className=" flex bg-white p-4 rounded-md shadow-md">
-              
-              <img src={developerIcon} alt="Icon" className='w-15 h-15' />
-              <p className=" ml-10 text-lg font-semibold">{app.APPName}</p>
-              <p className=" ml-10 text-lg font-semibold">{app.totalPageView}</p>
-              <p className=" ml-10 text-lg font-semibold">{app.totalButtonClick}</p>
-              {/* Later we set the create date or later update  */}
-              {/* <p className=" ml-10 text-lg font-semibold">{app.APPName}</p>
-               */}
-            </li>
-          ))}
-        </ul>
+          </tbody>
+        </table>
       </div>
+
+
     </div>
+    
   );
 };
 
