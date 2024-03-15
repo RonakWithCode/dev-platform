@@ -31,7 +31,7 @@ const Navbar = () => {
       ConfingDatabase.getUserInfo(user.$id)
         .then(async data => {
           setUserInfo(data)
-          let userDp = await ConfingDatabase.getfilePrevie(data.coverPhoto)
+          let userDp = await ConfingDatabase.getfilePrevie(data.DP)
           // console.log(userDp.href);
           setUserDp(userDp)
           // setUserDp(userDp);

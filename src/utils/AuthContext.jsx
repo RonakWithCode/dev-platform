@@ -41,9 +41,7 @@ export const AuthProvider = ({children}) => {
 
          const registerUser = async (userInfo,file) => {
             setLoading(true)
-
-            try{
-                
+            try{  
                 const Fullname = userInfo.firstName +" "+ userInfo.lastName;
                 let response = await account.create(ID.unique(), userInfo.email, userInfo.password1, Fullname);
                 if (response) {
@@ -59,10 +57,17 @@ export const AuthProvider = ({children}) => {
                         console.log('File uploaded successfully. File ID SIZE:', String(fileId).length);
                         userInfo.userId = accountDetails.$id;
                         userInfo.IsAccountDev = true;
-                        userInfo.coverPhoto = String(fileId);
-                        databaseService.createUserInfo(userInfo)
-                        navigate('/')
-                      } else {
+                        userInfo.DP = String(fileId);
+                        userInfo.DPUrl = "www.google.com/";
+                        delete userInfo.fileUpload;
+                        delete userInfo.password2;
+                        databaseService.createUserInfo(userInfo);
+                        // console.log("Error of registerUser",error);
+
+                            // navigate('/')
+                            
+                      }
+                       else {
                         // There was an issue with the upload
                         console.error('File upload failed.');
 
@@ -75,10 +80,13 @@ export const AuthProvider = ({children}) => {
                     console.error('Error uploading file:', error);
                   });
                 } else {
+                    
                   return Alert("Error To Create Account")
                 }
            
             }catch(error){
+                console.log("Error of registerUser",error);
+                
                 throw error;
             }
         
@@ -110,6 +118,6 @@ export const AuthProvider = ({children}) => {
 }
 
 //Custom Hook
-export const useAuth = ()=> {return useContext(AuthContext)}
+export const useAuth = () => {return useContext(AuthContext)}
 
 export default AuthContext;

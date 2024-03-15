@@ -17,13 +17,15 @@ export class DatabaseService {
 
     // User Functions
     async createUserInfo(UserInfo) {
-
         try {
             // Assuming authService.databases is your Appwrite databases instance
             const response = await this.database.createDocument(conf.AppwriteDatabaseID, conf.AppwriteCollectionUserInfoID, UserInfo.userId,
-                UserInfo); console.log('Document created successfully:', response);
+                UserInfo);
+            console.log('Document created successfully:', response);
+            return response;
         } catch (error) {
             console.error('Error creating document:', error);
+            throw error;
         }
 
 
@@ -210,8 +212,7 @@ export class DatabaseService {
                 file);
             return response.$id
         } catch (error) {
-            console.log(error);
-            return false;
+            throw error;
         }
     }
     
