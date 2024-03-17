@@ -1,4 +1,4 @@
-import { Client, Databases, Storage, ID, Query } from "appwrite";
+import { Client, Databases, Storage, ID, Query ,AppwriteException } from "appwrite";
 import conf from './VarConfing'
 import ErrorDialogBox from '../components/ErrorDialogBox';
 
@@ -106,6 +106,10 @@ export class DatabaseService {
         }
     }   
 
+  
+
+
+
     async SaveDeveloperInfo(Info) {
         try {
           console.log("Inside the save developer info :: ", Info);
@@ -139,7 +143,29 @@ export class DatabaseService {
             return "Error fetching details";
         }
     }
+ 
+
+    async getCommentsForApp(id) {
+        try {
+            const document = await this.database.getDocument(conf.AppwriteDatabaseID, conf.AppwriteCommentsCollection, id);
+            if (!document) {
+                throw "Document could not be found";
+            }
+            return document;
+        } catch (error) {
+            if (error instanceof AppwriteException) {
+                // console.error("getCommentsForApp ::: Document with the requested ID could not be found.");
+                throw "Document could not be found";
+            } else {
+                console.error("getCommentsForApp ::: " + error);
+                throw "Document could not be found";
+            }
+        }
+    }
     
+
+
+
     //  TODO 7/1/24 1:49AM :  make a changing in this code like added query; 
     async getAllApp() { 
         // query = Query.equal('pricingType', 'free')
@@ -249,10 +275,6 @@ export class DatabaseService {
         }
     }
     
-
-
-
-
     async uploadDelete(fileId) {
         try {
             return await this.bucket.deleteFile(conf.AppwriteBucketID,

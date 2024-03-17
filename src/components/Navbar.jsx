@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '../utils/AuthContext';
-import image from "../assets/add.png";
+import add_icon from "../assets/SVG/Icon/add-icon.svg";
 import ConfingDatabase from "../utils/ConfingDatabase"
+
 const Navbar = () => {
   const { user, logoutUser } = useAuth();
 
@@ -22,37 +23,29 @@ const Navbar = () => {
     { name: "Contact", to: "/contact" },
   ];
 
-
-
-
   useEffect(() => {
-    // Assuming ConfingDatabase.getUserInfo returns a promise
     if (user) {
       ConfingDatabase.getUserInfo(user.$id)
         .then(async data => {
           setUserInfo(data)
           let userDp = await ConfingDatabase.getfilePrevie(data.DP)
-          // console.log(userDp.href);
           setUserDp(userDp)
-          // setUserDp(userDp);
         })
         .catch(error => console.error('Error fetching user info:', error));
     }
-
-  }, []); // Empty dependency array means this effect will run once when the component mounts
+  }, []);
 
   if (user) {
     navigateLinks.push({ name: "Profile", to: "/profile" });
-    navigateLinks.push({ name: "Logout", to: "/login", onClick: logoutUser });
-    // setUserInfo(ConfingDatabase.getUserInfo(user.$id))    
   }
+
   const PhoneMode = () => {
     setPhoneModeactiveClass((prevClass) => (prevClass === "hidden" ? "" : "hidden"));
   };
 
   return (
     <>
-      <nav className="bg-white border-gray-200 dark:bg-gray-900">
+      <nav className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700">
         <div className="flex flex-wrap items-center justify-between mx-auto p-4">
           <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse">
             <img src="https://flowbite.com/docs/images/logo.svg" className="h-8" alt="Flowbite Logo" />
@@ -60,7 +53,7 @@ const Navbar = () => {
           </Link>
           <form>
             <div style={{ width: 250 }} className="relative">
-              <input onChange={text => { setSearch(text.target.value); }} value={search} type="search" id="default-search" className="block w-full  p-4 ps-1 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 " placeholder="Search App,news,update... " required />
+              <input onChange={text => { setSearch(text.target.value); }} value={search} type="search" id="default-search" className="block w-full  p-4 ps-1 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500 dark:border-gray-600 dark:focus:ring-gray-600 dark:focus:border-gray-600 focus:ring-opacity-50 dark:focus:ring-opacity-50" placeholder="Search App, news, update..." required />
               <button type="submit" className="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2">Search</button>
             </div>
           </form>
@@ -82,45 +75,40 @@ const Navbar = () => {
               {isDropdownOpen && (
                 <div
                   style={{ top: '3rem', right: '1rem' }}
-                  className="origin-top-right absolute w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100">
+                  className="origin-top-right absolute w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 divide-y divide-gray-100">
                   <div className="py-1">
                     <div className="px-4 py-3">
-                      <span className="block text-sm text-gray-900">{userInfo.username}</span>
-                      <span className="block text-sm text-gray-500 truncate">{userInfo.email}</span>
+                      <span className="block text-sm text-gray-900 dark:text-white">{userInfo.username}</span>
+                      <span className="block text-sm text-gray-500 truncate dark:text-white">{userInfo.email}</span>
                     </div>
                   </div>
-                  {/* Changing this into link */}
-                  <NavLink to="/Dashboard" 
-                  
-                  className={({ isActive }) => {
-                    return isActive
-                      ? "block px-4 py-2 text-sm text-blue-700 hover:bg-gray-100"
-                      : "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100";
-                  }}>
+                  <NavLink to="/Dashboard"
+                    className={({ isActive }) => {
+                      return isActive
+                        ? "block px-4 py-2 text-sm text-blue-700 dark:text-white  dark:hover:bg-gray-500"
+                        : "block px-4 py-2 text-sm text-gray-700 dark:text-white dark:hover:bg-gray-500";
+                    }}>
                     Dashboard
                   </NavLink>
                   <NavLink to="/profile" className={({ isActive }) => {
                     return isActive
-                      ? "block px-4 py-2 text-sm text-blue-700 hover:bg-gray-100"
-                      : "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100";
+                      ? "block px-4 py-2 text-sm text-blue-700 dark:text-white   hover:bg-gray-100 dark:hover:bg-gray-500"
+                      : "block px-4 py-2 text-sm text-gray-700 dark:text-white  hover:bg-gray-100 dark:hover:bg-gray-500";
                   }}>
                     Profile
                   </NavLink>
                   <NavLink to="/Settings" className={({ isActive }) => {
                     return isActive
-                      ? "block px-4 py-2 text-sm text-blue-700 hover:bg-gray-100"
-                      : "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100";
+                      ? "block px-4 py-2 text-sm text-blue-700 dark:text-white   hover:bg-gray-100 dark:hover:bg-gray-500"
+                      : "block px-4 py-2 text-sm text-gray-700 dark:text-white   hover:bg-gray-100 dark:hover:bg-gray-500";
                   }}>
                     Settings
                   </NavLink>
-                  <NavLink to="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  onClick={logoutUser}>
+                  <NavLink to="#" className="block px-4 py-2 text-sm dark:text-white text-gray-700   hover:bg-gray-100 dark:hover:bg-gray-500"
+                    onClick={logoutUser}>
                     Sign out
                   </NavLink>
-
-
                 </div>
-
               )}
             </> : <>
               <Link to={"/login"}>
@@ -132,7 +120,6 @@ const Navbar = () => {
               </Link>
 
             </>}
-
 
             <button
               data-collapse-toggle="navbar-user"
@@ -150,7 +137,7 @@ const Navbar = () => {
           </div>
 
           <div className={`items-center justify-between ${PhoneModeactiveClass} w-full md:flex md:w-auto md:order-1`} id="navbar-user">
-            <div className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white">
+            <div className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white">
               {navigateLinks.map((link) => (
                 <NavLink
                   key={link.name}
@@ -158,29 +145,19 @@ const Navbar = () => {
                   onClick={link.onClick}
                   className={({ isActive }) => {
                     return isActive
-                      ? "block py-2 px-3 text-black bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500"
-                      : "block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0";
+                      ? "block py-2 px-3 text-black bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500 dark:text-white"
+                      : "block py-2 px-3 text-black rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0  dark:text-white";
                   }}
                   aria-current={link.name}
                 >
-                  {link.name === "Logout" ? (
-                    <button className="cursor-pointer" onClick={link.onClick}>
-                      {link.name}
-                    </button>
-                  ) : (
-                    <div>{link.name}</div>
-                  )}
+                  <div>{link.name}</div>
+ 
                 </NavLink>
               ))}
-              {/* <button
-                type="button"
-                className="flex items-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-xl text-center"
-              > */}
               <Link to={"/new"}>
-              <img width={24} className="hover:bg-slate-400 focus:ring-4 focus:outline-none focus:ring-blue-300 cursor-pointer" src={image} alt="Create" />
+                <img width={24} className="hover:bg-gray-100 dark:hover:bg-gray-600  cursor-pointer" src={add_icon} alt="Create new APP" />
               </Link>
-              {/* Create
-              </button> */}
+              
             </div>
           </div>
         </div>
@@ -188,5 +165,7 @@ const Navbar = () => {
     </>
   );
 };
+
+
 
 export default Navbar;

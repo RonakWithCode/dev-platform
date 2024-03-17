@@ -12,6 +12,7 @@ function AppPostView() {
   const { id } = useParams();
   const [app, setApp] = useState(null);
   const [isShow, setIsShow] = useState(false);
+  const [comments, setComments] = useState();
 
   const toggleAccordion = () => {
     setIsShow(!isShow);
@@ -30,8 +31,33 @@ function AppPostView() {
     fetchAppDetails();
   }, [id]);
 
+
+
+
+
+  useEffect(() => {
+    // Fetch comments from the database or any other source
+    const fetchComments = async () => {
+      try {
+        // Fetch comments for the current app (assuming the databaseService has a method to fetch comments)
+        const commentsData = await databaseService.getCommentsForApp(id);
+        setComments(commentsData);
+
+        // console.log(commentsData);
+      } catch (error) {
+        // TODO: 17/03/2024 handle error of not foubd comments 
+        console.error('Error fetching comments:', error);
+      }
+    };
+
+    fetchComments();
+  }, [id]);
+
+
+
+
   if (!app) {
-    // return <LoadingDialogBox/>; // You can replace this with a loading spinner or skeleton UI
+      // return <LoadingDialogBox/>; // You can replace this with a loading spinner or skeleton UI
     return <>
       <div className="app-details-container p-8">
         <div className="flex items-center mb-4">
@@ -115,18 +141,19 @@ function AppPostView() {
   else {
     try {
     return (
-      <div className="app-details-container p-8">
+      <div className="bg-white dark:bg-gray-800 app-details-container p-8">
         <div className="flex items-center mb-4">
           <img src={app.appLogoUrl} alt="App Logo" className="w-36 h-36 mr-4 rounded" />
           <div>
-            <h1 className="text-2xl font-semibold">{app.appName}</h1>
-            <p className="text-green-500">{"app.appCompanyName"}</p>
+            <h1 className="text-2xl font-semibold text-black dark:text-white">{app.appName}</h1>
+            <p className="mt-6 text-green-500 font-medium text-xl">{app.CompanyName}</p>
+            <p className="mt-6 text-green-500 font-medium text-xl">total download's </p>
           </div>
         </div>
-  
         <button className="bg-blue-500 text-white py-2 px-4 rounded-full mb-4">
           View the site
         </button>
+        
   
         <div className="overflow-x-auto mb-4">
           <div className="flex space-x-4">
@@ -139,29 +166,19 @@ function AppPostView() {
                   width: '512px',
                   height: '300px',
                 }}
-                className="object-cover rounded"
+                className="object-cover"
               />
             ))}
           </div>
         </div>
   
-        {/* Add your Accordion and other details here */}
-        {/* ...
-  
-          Example structure for the Accordion:
-    
-  
-        */}
-        {/* <Accordion title="About the App">
-            <p>{app.appDescription}</p>
-          </Accordion> */}
-  
-        <div id="accordion-collapse" data-accordion="collapse">
+
+        <div  id="accordion-collapse" data-accordion="collapse">
           <h2 id="accordion-collapse-heading-1">
             <button
               type="button"
               onClick={toggleAccordion}
-              className="flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-b-0 border-gray-200 rounded-t-xl focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3"
+              className="flex items-center justify-between w-full p-5 font-medium rtl:text-right text-black dark:text-white border border-b-0 border-gray-200 dark:border-gray-500 hover:dark:border-white rounded-t-xl focus:ring-4 focus:ring-gray-200  dark:focus:ring-gray-700 gap-3"
               data-accordion-target="#accordion-collapse-body-1"
               aria-expanded={isShow}
               aria-controls="accordion-collapse-body-1"
@@ -187,19 +204,14 @@ function AppPostView() {
           </h2>
           <div id="accordion-collapse-body-1" className={`transition-all ${isShow ? 'block' : 'hidden'}`} aria-labelledby="accordion-collapse-heading-1">
             <div className="p-5 border border-t-0 border-gray-200 dark:border-gray-700">
-              <p className="mb-2 text-gray-500 dark:text-gray-400">
+              <p className="mb-2 text-gray-500 dark:text-white">
                 {app.appDescription}
               </p>
               {app.appWebsite ?
                 <>
-                  <p className="mb-2 text-gray-500 dark:text-gray-400">Get more konow about this by </p>
-                  <ul className="ps-5 text-gray-500 list-disc dark:text-gray-400">
-                    <li>
-                      <a href={app.appWebsite} className="text-blue-600 dark:text-blue-500 hover:underline">
+                  <p className="mb-2 text-gray-500 dark:text-white">Get more konow about this by        <a href={app.appWebsite} className="text-blue-600 dark:text-blue-500 hover:underline">
                         Website
-                      </a>
-                    </li>
-                  </ul>
+                      </a> </p>
                 </>
                 :
                 null
@@ -209,35 +221,31 @@ function AppPostView() {
           </div>
         </div>
   
-        <div className="mb-4">
-          <h3 className="text-xl font-semibold mb-2">Developer Details</h3>
-          <div className="flex items-center space-x-2 mb-2">
+        <div className="mb-4 mt-5">
+          <h3 className="text-2xl font-semibold mb-2 text-black dark:text-white">Developer Details</h3>
+          <div className="mt-5 flex items-center space-x-2 mb-2">
             <img src={developerIcon} alt="User Icon" className="w-4 h-4" />
-            <p>{app.developerName}</p>
+            <p className='text-xl font-semibold text-black dark:text-white' >{app.developerName}</p>
           </div>
   
-          <div className="flex items-center space-x-2 mb-2">
+          <div className="mt-5 flex items-center space-x-2 mb-2">
             <img src={emailIcon} alt="Email Icon" className="w-4 h-4" />
-            <p>{app.developerEmail}</p>
+            <p className='text-xl font-semibold text-black dark:text-white' >{app.developerEmail}</p>
           </div>
   
-          <div className="flex items-center space-x-2 mb-2">
+          <div className="mt-5 flex items-center space-x-2 mb-2">
             <img src={phoneIcon} alt="Phone Icon" className="w-4 h-4" />
-            <p>{app.developerPhone}</p>
+            <p className='text-xl font-semibold text-black dark:text-white' >{app.developerPhone}</p>
           </div>
   
-          <div className="flex items-center space-x-2 mb-2">
+          <div className="mt-5 flex items-center space-x-2 mb-2">
             <img src={websiteIcon} alt="Website Icon" className="w-4 h-4" />
-            <p>{app.developerPortfolio}</p>
+            <p className='text-xl font-semibold text-black dark:text-white' >{app.developerPortfolio}</p>
           </div>
         </div>
   
   
-        <div className="flex-1 ml-8">
-          {/* Right side content */}
-        <h1 className="text-4xl	font-semibold mt-32 mb-2">There for you</h1>
-          <AppViewVertical />
-        </div>
+    
       </div>
       
     );
