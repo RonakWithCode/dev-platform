@@ -1,6 +1,6 @@
 import React,{useState} from 'react'
 // import "../index.css";
-import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid'
+// import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid'
 import NewAppContent from "../components/NewAppContent"
 import NewBlogContent from "../components/NewBlogContent"
 import NewNewsContent from "../components/NewNewsContent"

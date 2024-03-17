@@ -6,7 +6,8 @@ import { useAuth } from '../utils/AuthContext';
 
 
 
-// TODO 14/01/24: Later i change form to react-hook-form // 
+// TODO 14/03/24: Change Screen Shot id to URL only and make screen shot into a array 
+ 
 function NewAppContent() {
   const navigate = useNavigate()
   const { user } = useAuth();
@@ -19,7 +20,7 @@ function NewAppContent() {
     CompanyName: '',
     appLogo: null,
     appCoverPhoto: null,
-    screenshots: [null, null, null],
+    screenshots: [],
     appWebsite: '',
     pricingType: 'free', // Add pricingType to formData
     developerName: '',
@@ -33,17 +34,62 @@ function NewAppContent() {
   // developerFacebook: '',
   // developerTwitter: '',
   // developerInstagram: '',
+  // const handleScreenshotChange = (e, index) => {
+  //   const screenshotFile = e.target.files[0];
+  //   setFormData((prevData) => {
+  //     const updatedScreenshots = [...prevData.screenshots];
+  //     updatedScreenshots[index] = screenshotFile;
+  //     return {
+  //       ...prevData,
+  //       screenshots: updatedScreenshots,
+  //     };
+  //   });
+  // };
+
+  const [logoError, setLogoError] = useState('');
+  const [CoverError, setCoverError] = useState('');
+  const [ScreenError, setScreenError] = useState('');
+
+
+
   const handleScreenshotChange = (e, index) => {
     const screenshotFile = e.target.files[0];
+    const maxSize = 2 * 1024 * 1024; // 2MB in bytes
+  
+    if (screenshotFile.size <= maxSize) {
+      setFormData((prevData) => {
+        const updatedScreenshots = [...prevData.screenshots];
+        updatedScreenshots[index] = screenshotFile;
+        return {
+          ...prevData,
+          screenshots: updatedScreenshots,
+        };
+        setScreenError("");
+      }
+      );
+    } else {
+      setScreenError("Screenshot size should be less than or equal to 2MB.");
+    }
+  };
+
+  const handleRemoveScreenshot = (index) => {
     setFormData((prevData) => {
       const updatedScreenshots = [...prevData.screenshots];
-      updatedScreenshots[index] = screenshotFile;
+      updatedScreenshots.splice(index, 1);
       return {
         ...prevData,
         screenshots: updatedScreenshots,
       };
     });
   };
+  
+
+
+
+
+
+
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -54,18 +100,62 @@ function NewAppContent() {
 
   const handleLogoChange = (e) => {
     const logoFile = e.target.files[0];
-    setFormData((prevData) => ({
-      ...prevData,
-      appLogo: logoFile,
-    }));
+    const allowedSize = 2 * 1024 * 1024; // 2MB in bytes
+    const allowedWidth = 512; // 144px
+    const allowedHeight = 512; // 144px
+
+    if (logoFile.size <= allowedSize) {
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const image = new Image();
+        image.src = event.target.result;
+
+        image.onload = function () {
+          if (image.width === allowedWidth && image.height === allowedHeight) {
+            setFormData((prevData) => ({
+              ...prevData,
+              appLogo: logoFile,
+            }));
+            setLogoError('');
+          } else {
+            setLogoError('Logo dimensions should be 512px x 512px.');
+          }
+        };
+      };
+
+      reader.readAsDataURL(logoFile);
+    } else {
+      setLogoError('Logo size should be less than or equal to 2MB or 512px x 512px.');
+    }
   };
 
   const handleCoverPhotoChange = (e) => {
     const coverPhotoFile = e.target.files[0];
-    setFormData((prevData) => ({
-      ...prevData,
-      appCoverPhoto: coverPhotoFile,
-    }));
+    const maxSize = 3 * 1024 * 1024; // 3MB in bytes
+    const maxWidth = 1024;
+    const maxHeight = 500;
+  
+    if (coverPhotoFile.size <= maxSize) {
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const image = new Image();
+        image.src = event.target.result;
+        image.onload = function () {
+          if (this.width <= maxWidth && this.height <= maxHeight) {
+            setFormData((prevData) => ({
+              ...prevData,
+              appCoverPhoto: coverPhotoFile,
+            }));
+            setCoverError('');
+          } else {
+            setCoverError("Cover photo dimensions should be 1024px x 500px or size should be less than or equal to 3MB.")
+          }
+        };
+      };
+      reader.readAsDataURL(coverPhotoFile);
+    } else {
+      setCoverError("Cover photo dimensions should be 1024px x 500px or size should be less than or equal to 3MB.")
+    }
   };
 
 
@@ -183,8 +273,10 @@ function NewAppContent() {
               </div>
 
               <div className="mb-4">
+                
                 <label className="block text-sm font-medium text-gray-600 mb-2">
                   App Logo:
+                  <div className="block text-sm font-medium text-gray-600 mb-2">Logo size should be less than or equal to 2MB <br />  512px * 512px</div>
                   <input
                     type="file"
                     name="appLogo"
@@ -193,6 +285,7 @@ function NewAppContent() {
                     className="mt-1"
                   />
                 </label>
+                {logoError && <div className="text-red-500 mb-4">{logoError}</div>}
                 {formData.appLogo && (
                   <img
                     src={URL.createObjectURL(formData.appLogo)}
@@ -201,10 +294,11 @@ function NewAppContent() {
                   />
                 )}
               </div>
-
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-600 mb-2">
                   App Cover Photo:
+                  <div className="block text-sm  font-normal text-gray-600 mb-2">App Cover Photo size should be less than or equal to 3MB <br />  1024px * 500px</div>
+
                   <input
                     type="file"
                     name="appCoverPhoto"
@@ -212,6 +306,8 @@ function NewAppContent() {
                     onChange={handleCoverPhotoChange}
                     className="mt-1"
                   />
+                {CoverError && <div className="text-red-500 mb-4">{CoverError}</div>}
+
                 </label>
                 {formData.appCoverPhoto && (
                   <img
@@ -289,30 +385,47 @@ function NewAppContent() {
                 </div>
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-600 mb-2">
-                  Screenshots:
-                </label>
-                {formData.screenshots.map((screenshot, index) => (
-                  <div key={index} className="mb-2">
-                    <input
-                      type="file"
-                      name={`screenshot${index + 1}`}
-                      accept="image/*"
-                      onChange={(e) => handleScreenshotChange(e, index)}
-                      className="mt-1"
-                    />
-                    {screenshot && (
-                      <img
-                        src={URL.createObjectURL(screenshot)}
-                        alt={`Screenshot ${index + 1}`}
-                        className="max-w-xs my-2"
-                      />
-                    )}
-                  </div>
-                ))}
+        <label className="block text-sm font-medium text-gray-600 mb-2">
+          Screenshots:
+        
+          <div className="block text-sm  font-normal text-gray-600 mb-2">ScreenShot size should be less than or equal to 2MB</div>
 
+        </label>
+        {formData.screenshots.map((screenshot, index) => (
+  <div key={index} className="mb-2 relative">
+    <input
+      type="file"
+      accept="image/*"
+      onChange={(e) => handleScreenshotChange(e, index)}
+      className="mt-1"
+    />
+    {screenshot && (
+      <div className="relative">
+        <img
+          src={URL.createObjectURL(screenshot)}
+          alt={`Screenshot ${index + 1}`}
+          className="max-w-xs my-2"
+        />
+        <button
+          onClick={() => handleRemoveScreenshot(index)}
+          className="absolute top-0 right-0 bg-red-500 text-white px-2 py-1 rounded"
+        >
+          X
+        </button>
+      </div>
+    )}
+  </div>
 
-              </div>
+))}
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => handleScreenshotChange(e, formData.screenshots.length)}
+          className="mt-1"
+        />
+        {ScreenError && <div className="text-red-500 mb-4">{ScreenError}</div>}
+
+      </div>
 
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-600 mb-2">
@@ -366,7 +479,7 @@ function NewAppContent() {
                         let updatedValue = e.target.value.replace(/[^0-9.]/g, '');
                         updatedValue = parseFloat(updatedValue) || 0; // Handle NaN by defaulting to 0
                         updatedValue = Math.max(1, updatedValue);
-                        setFormData({ ...formData, price: updatedValue });
+                        setFormData({ ...formData, price: String(updatedValue) });
                       }}
                       className="mt-1 p-2 w-full border rounded-md"
                     />
