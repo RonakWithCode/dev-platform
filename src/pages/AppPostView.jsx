@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { DatabaseService } from "../utils/ConfingDatabase";
+
 import AppViewVertical from '../components/AppViewVertical'
 import ErrorDialogBox from '../components/ErrorDialogBox';
+import CommentForm from '../components/CommentForm';
 import developerIcon from '../assets/developerIcon.png'
 import emailIcon from '../assets/emailIcon.png'
 import phoneIcon from '../assets/phoneIcon.png'
@@ -243,10 +245,24 @@ function AppPostView() {
             <p className='text-xl font-semibold text-black dark:text-white' >{app.developerPortfolio}</p>
           </div>
         </div>
-  
-  
-    
+
+        <div className="mt-8">
+        <h3 className="text-2xl font-semibold mb-4 text-black dark:text-white">Comments</h3>
+        <CommentForm  />
+        <div className="space-y-4">
+          {/* {comments.map(comment => (
+            <Comment 
+              key={comment.id} 
+              comment={comment} 
+              onEdit={handleEditComment} 
+              onDelete={handleDeleteComment} 
+            />
+          ))} */}
+        </div>
+        {/* Form to add a new comment */}
       </div>
+    </div>
+
       
     );
   }catch(e){

@@ -1,8 +1,11 @@
 // CommentForm.js
 import React, { useState } from 'react';
+import { useAuth } from '../utils/AuthContext';
+
 
 const CommentForm = ({ onAddComment }) => {
   const [commentContent, setCommentContent] = useState('');
+  const { user } = useAuth();
 
   const handleInputChange = (e) => {
     setCommentContent(e.target.value);
@@ -10,6 +13,10 @@ const CommentForm = ({ onAddComment }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if(!user){
+      console.log("you must be logged in");
+    }
+
     if (commentContent.trim() === '') {
       // Alert or validation message for empty comment
       return;

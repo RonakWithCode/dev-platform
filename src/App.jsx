@@ -9,8 +9,8 @@ import Profile from './pages/Profile'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
-import CreatePage from './pages/CreatePage'
-import AppPostView from './pages/AppPostView'
+import Project from './pages/Project'
+import FolderOpenPage from './pages/FolderOpenPage'
 
 
 // const Layout = () => {
@@ -58,12 +58,11 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login/>}/>
         <Route path="/register" element={<Register/>}/>
-        <Route path="/app/:id" element={<AppPostView/>}/>
         <Route path="/" element={<Home/>}/>
         <Route element={<PrivateRoutes />}>
           <Route path="/profile" element={<Profile/>}/>
-          <Route path="/dashboard" element={<Dashboard/>}/> {/* NOW WORK ON IT */}
-          <Route path="/new" element={<CreatePage/>}/>
+          <Route path="/project" element={<Project/>}/>
+          <Route path="/folderOpenPage/:id" element={<FolderOpenPage/>}/>
 
         </Route>
       </Routes>

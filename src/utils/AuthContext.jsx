@@ -39,52 +39,36 @@ export const AuthProvider = ({children}) => {
             setUser(null)
          }
 
-         const registerUser = async (userInfo,file) => {
+         const registerUser = async (userInfo) => {
             setLoading(true)
             try{  
-                const Fullname = userInfo.firstName +" "+ userInfo.lastName;
-                let response = await account.create(ID.unique(), userInfo.email, userInfo.password1, Fullname);
-                if (response) {
-                  await account.createEmailSession(userInfo.email, userInfo.password1)
-                  let accountDetails = await account.get();
-                  setUser(accountDetails)
-                  console.log("User id ",accountDetails.$id)
-                  const databaseService = new DatabaseService();
-                  databaseService.uploadFile(file).then((fileId) => {
-                    if (fileId) {
-                        // File was uploaded successfully, and fileId contains the ID
-                        console.log('File uploaded successfully. File ID:', fileId);
-                        console.log('File uploaded successfully. File ID SIZE:', String(fileId).length);
-                        userInfo.userId = accountDetails.$id;
-                        userInfo.IsAccountDev = true;
-                        userInfo.DP = String(fileId);
-                        userInfo.DPUrl = "www.google.com/";
-                        delete userInfo.fileUpload;
-                        delete userInfo.password2;
-                        databaseService.createUserInfo(userInfo);
-                        // console.log("Error of registerUser",error);
-
-                            // navigate('/')
-                            
-                      }
-                       else {
-                        // There was an issue with the upload
-                        console.error('File upload failed.');
-
-                        return false;
-                      }
-                  }
-                  )
-                  .catch((error) => { 
-                    // Handle any errors that occurred during the upload
-                    console.error('Error uploading file:', error);
-                  });
-                } else {
-                    
-                  return Alert("Error To Create Account")
+                delete userInfo.confirm-password;
+                // delete userInfo.password2;
+                console.log(userInfo)
+                const userdata = {
+                    "firstName": userInfo.firstName,
+                    "lastName": userInfo.lastName,
+                    "email": userInfo.email,
+                    "password": userInfo.password,
                 }
-           
-            }catch(error){
+                const Fullname = userInfo.firstName +" "+ userInfo.lastName;
+                let response = await account.create(ID.unique(), userInfo.email, userInfo.password, Fullname);
+                if (response) {
+                  await account.createEmailSession(userInfo.email, userInfo.password)
+                  let accountDetails = await account.get();
+                  setUser(accountDetails);
+                  console.log("User id ",accountDetails.$id);
+                  userdata.Fullname = Fullname;
+                  userdata.userId = accountDetails.$id;
+                  console.log( "userdata  : ",userdata);
+
+                  const databaseService = new DatabaseService();
+                  databaseService.createUserInfo(userdata);
+                  console.log(userdata);
+
+          
+            }
+        }catch(error){
                 console.log("Error of registerUser",error);
                 
                 throw error;

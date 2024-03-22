@@ -18,6 +18,7 @@ const Navbar = () => {
 
   const navigateLinks = [
     { name: "Home", to: "/" },
+    { name: "Project", to: "/project" },
     { name: "About", to: "/about" },
     { name: "Service", to: "/service" },
     { name: "Contact", to: "/contact" },
@@ -28,8 +29,8 @@ const Navbar = () => {
       ConfingDatabase.getUserInfo(user.$id)
         .then(async data => {
           setUserInfo(data)
-          let userDp = await ConfingDatabase.getfilePrevie(data.DP)
-          setUserDp(userDp)
+          // let userDp = await ConfingDatabase.getfilePrevie(data.DP)
+          // setUserDp(userDp)
         })
         .catch(error => console.error('Error fetching user info:', error));
     }
@@ -49,7 +50,7 @@ const Navbar = () => {
         <div className="flex flex-wrap items-center justify-between mx-auto p-4">
           <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse">
             <img src="https://flowbite.com/docs/images/logo.svg" className="h-8" alt="Flowbite Logo" />
-            <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">DEV-Platform</span>
+            <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">social-media-content-maker</span>
           </Link>
           <form>
             <div style={{ width: 250 }} className="relative">
@@ -69,7 +70,7 @@ const Navbar = () => {
                 data-dropdown-placement="bottom"
               >
                 <span className="sr-only">Open user menu</span>
-                <img className="w-8 h-8 rounded-full" src={userDp} alt="user photo" />
+                <img className="w-8 h-8 rounded-full" src={add_icon} alt="user photo" />
               </button>
 
               {isDropdownOpen && (
@@ -78,7 +79,7 @@ const Navbar = () => {
                   className="origin-top-right absolute w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 divide-y divide-gray-100">
                   <div className="py-1">
                     <div className="px-4 py-3">
-                      <span className="block text-sm text-gray-900 dark:text-white">{userInfo.username}</span>
+                      <span className="block text-sm text-gray-900 dark:text-white">{userInfo.Fullname}</span>
                       <span className="block text-sm text-gray-500 truncate dark:text-white">{userInfo.email}</span>
                     </div>
                   </div>
@@ -111,12 +112,12 @@ const Navbar = () => {
                 </div>
               )}
             </> : <>
-              <Link to={"/login"}>
-                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"> Login</button>
+            <Link to={"/login"}>
+                  <button className="text-black bg-white dark:bg-gray-900 hover:bg-gray-900 dark:text-white hover:text-white font-bold py-2 px-4  rounded-xl">Login</button>
               </Link>
               <Link to={"/register"}>
 
-                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"> register</button>
+                <button className="text-white bg-gray-700 dark:bg-white hover:bg-gray-900 dark:hover:bg-gray-400 dark:text-black font-bold py-2 px-4  rounded-xl">Register</button>
               </Link>
 
             </>}
